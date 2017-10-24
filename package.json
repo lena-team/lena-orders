@@ -4,7 +4,11 @@
   "description": "this service stores and updates all orders made by the Consumer service and sends all relevant information to the Analytics service",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run-script lint && npm run-script unit",
+    "start": "node server/index.js",
+    "dev-start": "nodemon server/index.js",
+    "lint": "eslint server/",
+    "unit": "mocha server/test/**Spec.js"
   },
   "repository": {
     "type": "git",
@@ -17,8 +21,17 @@
   },
   "homepage": "https://github.com/lena-team/lena-orders#readme",
   "devDependencies": {
+    "chai": "^4.1.2",
     "eslint": "^4.9.0",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.8.0"
+    "eslint-plugin-import": "^2.8.0",
+    "mocha": "^4.0.1",
+    "nodemon": "^1.12.1",
+    "supertest": "^3.0.0"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2"
   }
 }
