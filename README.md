@@ -43,11 +43,11 @@ npm install
 
 ### Roadmap
 
-View the project roadmap [here](LINK_TO_APP_PLAN)
+View the project roadmap [here](LINK_TO_APP_PLAN).
 
 
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
 
-[LINK_TO_APP_PLAN](https://docs.google.com/document/d/1FieU-JmYZvuqtOi9WySy4FsOhVgMdWnBjQewCObnM6I/edit#heading=h.kdpea8yi6wmv)
+[LINK_TO_APP_PLAN]: https://docs.google.com/document/d/1FieU-JmYZvuqtOi9WySy4FsOhVgMdWnBjQewCObnM6I/edit#heading=h.kdpea8yi6wmv
