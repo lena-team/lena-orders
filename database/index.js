@@ -10,15 +10,15 @@ const client = new Client({
 
 client.connect();
 
-const createOrder = (userId, shippingAddress) => {
+const createOrder = (userId, shippingAddress, createdAt) => {
   const queryStr = `
     INSERT INTO orders
     (user_id, shipping_address, delivery_status, created_at)
     VALUES
     ($1, $2, 'created', $3)
+    RETURNING order_id
   `;
-  const currDate = new Date().toISOString().slice(0, 10);
-  const queryArgs = [userId, shippingAddress, currDate];
+  const queryArgs = [userId, shippingAddress, createdAt];
   return new Promise((resolve, reject) => {
     client.query(queryStr, queryArgs, (err, res) => {
       if (err) {
@@ -50,9 +50,9 @@ const updateOrderStatus = (orderId, deliveryStatus, updatedAt) => {
 };
 
 // createOrder(2, 'work')
-//   .then(result => console.log(result))
+//   .then(result => console.log(result.rows[0].order_id))
 //   .catch(err => console.error(err));
-//
+
 // updateOrderStatus(3, 'completed', new Date().toISOString().slice(0, 10))
 //   .then(result => console.log(result))
 //   .catch(err => console.error(err));
