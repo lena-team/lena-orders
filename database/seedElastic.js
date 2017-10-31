@@ -1,9 +1,7 @@
-const axios = require('axios');
 const elasticsearch = require('elasticsearch');
 
 const client = new elasticsearch.Client({
   host: 'localhost:9200',
-  log: 'trace',
 });
 
 // Helper Functions
@@ -47,11 +45,10 @@ const generateFakeOrders = async (start = 0, end = 10000000) => {
       updatedAt,
       deliveryStatus,
       shippingAddress,
-      deliveryTime: Math.round((updatedAt.getTime() - createdAt.getTime()) / (24 * 60 * 60 * 1000)),
     });
   }
   client.bulk({
-    body: entries
+    body: entries,
   }, (err, resp) => {
     if (err) { console.error(err); }
     return resp;
