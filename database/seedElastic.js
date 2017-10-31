@@ -1,6 +1,10 @@
-const Promise = require('bluebird');
 const axios = require('axios');
-const { createOrder, updateOrderStatus } = require('./index');
+const elasticsearch = require('elasticsearch');
+
+const client = new elasticsearch.Client({
+  host: 'localhost:9200',
+  log: 'trace',
+});
 
 // Helper Functions
 
@@ -18,7 +22,7 @@ const addDays = (date, days) => {
 // Function that generates the data
 
 const generateFakeOrders = async (start = 0, end = 10000000) => {
-  const promises = [];
+  const entries = [];
   for (let i = start; i < end; i += 1) {
     const userId = getRandomNumber(1000, 1000000);
     const adressId = getRandomNumber(0, addresses.length);
@@ -36,19 +40,25 @@ const generateFakeOrders = async (start = 0, end = 10000000) => {
     const updatedAt = addDays(new Date(createdAt), daysUntilUpdate);
     const cancelled = Math.random() < (0.2 + (daysUntilUpdate * 0.02));
     const deliveryStatus = cancelled ? 'cancelled' : 'delivered';
-    promises.push(axios.post(`http://localhost:9200/transactions/order/${i}`, {
-      createdAt, updatedAt, deliveryStatus, shippingAddress,
+    entries.push({ index: { _index: 'transactions', _type: 'order' } });
+    entries.push({
+      userId,
+      createdAt,
+      updatedAt,
+      deliveryStatus,
+      shippingAddress,
       deliveryTime: Math.round((updatedAt.getTime() - createdAt.getTime()) / (24 * 60 * 60 * 1000)),
-    })
-      .catch(err => console.error(err)))
-  }
-  Promise.all(promises)
-    .then(() => {
-      process.exit();
     });
+  }
+  client.bulk({
+    body: entries
+  }, (err, resp) => {
+    if (err) { console.error(err); }
+    return resp;
+  });
 };
 
-generateFakeOrders(9000, 10000);
+generateFakeOrders(0, 10000);
 
 // for ten million entries
 //   choose a random integer for the unser_id
