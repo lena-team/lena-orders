@@ -1,11 +1,11 @@
-const pgp = require('pg-promise');
+const pgp = require('pg-promise')();
 
 const connection = {
   host: process.env.LENA_ORDERS_DB_HOST || 'localhost',
   port: process.env.LENA_ORDERS_DB_PORT || 5432,
   database: process.env.LENA_ORDERS_DB_DATA || 'transactions',
   user: process.env.LENA_ORDERS_DB_USER || 'lena',
-  password: process.evn.LENA_ORDERS_DB_PASSWORD || '',
+  // password: process.env.LENA_ORDERS_DB_PASSWORD || '',
 };
 
 const db = pgp(connection);
@@ -15,7 +15,8 @@ const db = pgp(connection);
  * @param  {index} userId            an integer representing the idenitfying index of a user
  * @param  {address} shippingAddress an address that the products are to be shipped to
  * @param  {date} createdAt          date that the order was created on
- * @return {Promise}                 a promise hodling the result of the row insertion
+ * @return {Promise}                 a promise hodling the result of the row insertion and
+ *                                     order_id of inserted row
  */
 
 const createOrder = (userId, shippingAddress, createdAt) => {
@@ -24,9 +25,10 @@ const createOrder = (userId, shippingAddress, createdAt) => {
     (user_id, shipping_address, delivery_status, created_at)
     VALUES
     ($1, $2, 'created', $3)
+    RETURNING order_id
   `;
   const queryArgs = [userId, shippingAddress, createdAt];
-  return db.none(queryStr, queryArgs);
+  return db.one(queryStr, queryArgs);
 };
 
 /**
@@ -49,29 +51,40 @@ const updateOrderStatus = (orderId, deliveryStatus, updatedAt) => {
 };
 
 /**
- * A function that will assign
- * @param {[type]} orderId    [description]
- * @param {[type]} productArr [description]
+ * A function that will assign products and their amounts to specific orders
+ * @param {array} productArr    An array of objects of the form:
+ *                                { order_id, product_id, amount }
  */
 
-const addProductsToOrder = (orderId, productArr) => {
-  const queryStr = `
-    INSERT INTO products
-    (order_id, product_id, amount)
-    VALUES
-    ($1, $2)
-  `;
+const addProductsToOrder = (productArr) => {
+  const columns = ['order_id', 'product_id', 'amount'];
+  const queryStr = pgp.helpers.insert(productArr, columns, 'products');
+  return db.none(queryStr);
 };
 
-// createOrder(2, 'work')
+// createOrder(2, 'work', new Date())
 //   .then(result => console.log(result))
+//   .then(() => process.exit())
 //   .catch(err => console.error(err));
 //
-// updateOrderStatus(3, 'completed', new Date().toISOString().slice(0, 10))
+// updateOrderStatus(11889894, 'completed', new Date().toISOString().slice(0, 10))
 //   .then(result => console.log(result))
+//   .then(() => process.exit())
+//   .catch(err => console.error(err));
+
+// const productArr = [
+//   { order_id: 11869892, product_id: 10, amount: 4 },
+//   { order_id: 11869892, product_id: 3, amount: 5 },
+//   { order_id: 11869892, product_id: 234, amount: 7 },
+// ];
+//
+// addProductsToOrder(productArr)
+//   .then(result => console.log(result))
+//   .then(() => process.exit())
 //   .catch(err => console.error(err));
 
 module.exports = {
   createOrder,
   updateOrderStatus,
+  addProductsToOrder,
 };
