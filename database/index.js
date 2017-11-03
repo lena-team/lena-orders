@@ -1,26 +1,25 @@
-const { Client } = require('pg');
-const Promise = require('bluebird');
+const pgp = require('pg-promise');
 const yyyymmdd = require('yyyy-mm-dd');
 
-const client = new Client({
-  user: process.env.LENA_ORDERS_DB_USER || 'lena',
+const connection = {
   host: process.env.LENA_ORDERS_DB_HOST || 'localhost',
-  database: process.env.LENA_ORDERS_DB_DATA || 'transactions',
   port: process.env.LENA_ORDERS_DB_PORT || 5432,
-});
+  database: process.env.LENA_ORDERS_DB_DATA || 'transactions',
+  user: process.env.LENA_ORDERS_DB_USER || 'lena',
+  password: process.evn.LENA_ORDERS_DB_PASSWORD || '',
+};
 
-client.connect();
+const db = pgp(connection);
 
-const createOrder = (userId, shippingAddress) => {
+const createOrder = (userId, shippingAddress, createdAt) => {
   const queryStr = `
     INSERT INTO orders
     (user_id, shipping_address, delivery_status, created_at)
     VALUES
     ($1, $2, 'created', $3)
   `;
-  const currDate = yyyymmdd(new Date());
-  const queryArgs = [userId, shippingAddress, currDate];
-  return client.query(queryStr, queryArgs);
+  const queryArgs = [userId, shippingAddress, createdAt];
+  return db.none(queryStr, queryArgs);
 };
 
 const updateOrderStatus = (orderId, deliveryStatus, updatedAt) => {
@@ -31,7 +30,7 @@ const updateOrderStatus = (orderId, deliveryStatus, updatedAt) => {
     WHERE order_id = $1
   `;
   const queryArgs = [orderId, deliveryStatus, updatedAt];
-  return client.query(queryStr, queryArgs);
+  return db.none(queryStr, queryArgs);
 };
 
 // createOrder(2, 'work')
