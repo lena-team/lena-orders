@@ -45,9 +45,10 @@ const updateOrderStatus = (orderId, deliveryStatus, updatedAt) => {
     SET
     delivery_status = $2, updated_at = $3
     WHERE order_id = $1
+    RETURNING order_id
   `;
   const queryArgs = [orderId, deliveryStatus, updatedAt];
-  return db.none(queryStr, queryArgs);
+  return db.one(queryStr, queryArgs);
 };
 
 /**

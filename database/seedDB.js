@@ -1,5 +1,7 @@
 const Promise = require('bluebird');
-const { createOrder, updateOrderStatus } = require('./index');
+const yyyymmdd = require('yyyy-mm-dd');
+const randomProfile = require('random-profile-generator');
+const { createOrder, updateOrderStatus, addProductsToOrder } = require('./index');
 
 // Helper Functions
 
@@ -7,7 +9,10 @@ const getRandomNumber = (start, end) => (
   Math.floor((Math.random() * (end - start)) + start)
 );
 
-const addresses = ['work', 'home', 'school'];
+const randomAddress = () => {
+  const { zip, state } = randomProfile.profile();
+  return `${state} ${zip}`;
+};
 
 const addDays = (date, days) => {
   date.setDate(date.getDate() + days);
@@ -20,25 +25,30 @@ const generateFakeOrders = async (start = 0, end = 10000000) => {
   const promises = [];
   for (let i = start; i < end; i += 1) {
     const userId = getRandomNumber(1000, 1000000);
-    const adressId = getRandomNumber(0, addresses.length);
-    const shippingAddress = addresses[adressId];
-    let month = getRandomNumber(1, 13);
-    if (month < 10) {
-      month = `0${month}`;
-    }
-    let day = getRandomNumber(1, 28);
-    if (day < 10) {
-      day = `0${day}`;
-    }
-    const createdAt = `2017-${month}-${day}`;
+    const shippingAddress = randomAddress();
+    const month = getRandomNumber(1, 13);
+    const day = getRandomNumber(1, 28);
+    const createdAt = yyyymmdd(new Date(2017, month, day));
     promises.push(createOrder(userId, shippingAddress, createdAt)
-      .then(response => response.rows[0].order_id)
+      .then(response => response.order_id)
       .then((orderId) => {
         const daysUntilUpdate = getRandomNumber(0, 20);
         const updatedAt = addDays(new Date(createdAt), daysUntilUpdate);
         const cancelled = Math.random() < (0.2 + (daysUntilUpdate * 0.02));
         const deliveryStatus = cancelled ? 'cancelled' : 'delivered';
         return updateOrderStatus(orderId, deliveryStatus, updatedAt);
+      })
+      .then(response => response.order_id)
+      .then((orderId) => {
+        const productArr = [];
+        const numProducts = getRandomNumber(1, 10);
+        for (let j = 0; j < numProducts; j += 1) {
+          const product = { order_id: orderId };
+          product.amount = getRandomNumber(1, 100);
+          product.product_id = getRandomNumber(1000, 100000000);
+          productArr.push(product);
+        }
+        return addProductsToOrder(productArr);
       })
       .catch(err => console.error(err)))
   }
