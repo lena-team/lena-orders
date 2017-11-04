@@ -26,7 +26,7 @@ const generateFakeOrders = async (start = 0, end = 10000000) => {
   for (let i = start; i < end; i += 1) {
     const userId = getRandomNumber(1000, 1000000);
     const shippingAddress = randomAddress();
-    const month = getRandomNumber(1, 13);
+    const month = getRandomNumber(0, 12);
     const day = getRandomNumber(1, 28);
     const createdAt = yyyymmdd(new Date(2017, month, day));
     promises.push(createOrder(userId, shippingAddress, createdAt)
@@ -50,7 +50,7 @@ const generateFakeOrders = async (start = 0, end = 10000000) => {
         }
         return addProductsToOrder(productArr);
       })
-      .catch(err => console.error(err)))
+      .catch(err => console.error(err)));
   }
   Promise.all(promises)
     .then(() => {
