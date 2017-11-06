@@ -8,7 +8,7 @@
     "start": "node server/index.js",
     "dev-start": "nodemon server/index.js",
     "lint": "eslint server/",
-    "unit": "mocha server/test/**Spec.js"
+    "unit": "mocha test/**Spec.js"
   },
   "repository": {
     "type": "git",
@@ -30,12 +30,13 @@
     "supertest": "^3.0.0"
   },
   "dependencies": {
+    "axios": "^0.17.0",
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
+    "elasticsearch": "^13.3.1",
     "express": "^4.16.2",
     "pg": "^7.3.0",
     "pg-promise": "^7.2.1",
-    "random-profile-generator": "^2.3.0",
     "yyyy-mm-dd": "^1.0.2"
   }
 }
