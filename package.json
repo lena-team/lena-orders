@@ -37,7 +37,6 @@
     "express": "^4.16.2",
     "pg": "^7.3.0",
     "pg-promise": "^7.2.1",
-    "random-profile-generator": "^2.3.0",
     "yyyy-mm-dd": "^1.0.2"
   }
 }

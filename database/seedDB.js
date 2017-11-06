@@ -1,16 +1,18 @@
 const Promise = require('bluebird');
-const yyyymmdd = require('yyyy-mm-dd');
 const { createOrder, updateOrderStatus, addProductsToOrder } = require('./index');
-const { getRandomNumber, randomAddress, addDays } = require('../helpers');
+const {
+  getRandomNumber,
+  getRandomAddress,
+  getRandomDate,
+  addDays,
+} = require('../helpers');
 
 const generateFakeOrders = (start = 0, end = 10000000) => {
   const promises = [];
   for (let i = start; i < end; i += 1) {
     const userId = getRandomNumber(1000, 1000000);
-    const shippingAddress = randomAddress();
-    const month = getRandomNumber(0, 12);
-    const day = getRandomNumber(1, 28);
-    const createdAt = yyyymmdd(new Date(2017, month, day));
+    const shippingAddress = getRandomAddress();
+    const createdAt = getRandomDate();
     promises.push(createOrder(userId, shippingAddress, createdAt)
       .then(response => response.order_id)
       .then((orderId) => {

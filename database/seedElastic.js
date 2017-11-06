@@ -1,6 +1,10 @@
 const elasticsearch = require('elasticsearch');
-const yyyymmdd = require('yyyy-mm-dd');
-const { getRandomNumber, randomAddress, addDays } = require('../helpers');
+const {
+  getRandomNumber,
+  getRandomAddress,
+  getRandomDate,
+  addDays,
+} = require('../helpers');
 
 const client = new elasticsearch.Client({
   host: 'localhost:9200',
@@ -10,10 +14,8 @@ const generateFakeOrders = (start = 0, end = 10000000) => {
   const entries = [];
   for (let i = start; i < end; i += 1) {
     const userId = getRandomNumber(1000, 1000000);
-    const shippingAddress = randomAddress();
-    const month = getRandomNumber(0, 12);
-    const day = getRandomNumber(1, 28);
-    const createdAt = yyyymmdd(new Date(2017, month, day));
+    const shippingAddress = getRandomAddress();
+    const createdAt = getRandomDate();
     const daysUntilUpdate = getRandomNumber(0, 20);
     const updatedAt = addDays(new Date(createdAt), daysUntilUpdate);
     const cancelled = Math.random() < (0.2 + (daysUntilUpdate * 0.02));
@@ -26,18 +28,7 @@ const generateFakeOrders = (start = 0, end = 10000000) => {
       product.product_id = getRandomNumber(1000, 100000000);
       productArr.push(product);
     }
-    entries.push({
-      index: { _index: 'transactions', _type: 'order' },
-      mappings: {
-        order: {
-          properties: {
-            shippingAddress: {
-              type: 'geo_point',
-            },
-          },
-        },
-      },
-    });
+    entries.push({ index: { _index: 'transactions', _type: 'order' } });
     entries.push({
       userId,
       createdAt,

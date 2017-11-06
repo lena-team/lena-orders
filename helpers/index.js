@@ -1,12 +1,19 @@
-const randomProfile = require('random-profile-generator');
+const yyyymmdd = require('yyyy-mm-dd');
 
-const getRandomNumber = (start, end) => (
-  Math.floor((Math.random() * (end - start)) + start)
+const getRandomNumber = (start, end, fix = 0) => (
+  ((Math.random() * (end - start)) + start).toFixed(fix) * 1
 );
 
-const randomAddress = () => {
-  const { zip, state } = randomProfile.profile();
-  return `${state} ${zip}`;
+const getRandomAddress = () => {
+  // const lon = getRandomNumber(-180, 180, 2);
+  // const lat = getRandomNumber(-90, 90, 2);
+  // return { lat, lon };
+};
+
+const getRandomDate = () => {
+  const month = getRandomNumber(0, 12);
+  const day = getRandomNumber(1, 28);
+  return yyyymmdd(new Date(2017, month, day));
 };
 
 const addDays = (date, numDays) => {
@@ -18,5 +25,6 @@ const addDays = (date, numDays) => {
 module.exports = {
   addDays,
   getRandomNumber,
-  randomAddress,
+  getRandomAddress,
+  getRandomDate,
 };
