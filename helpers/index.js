@@ -11,7 +11,7 @@ const getRandomAddress = () => {
 };
 
 const getRandomDate = () => {
-  const month = getRandomNumber(0, 12);
+  const month = getRandomNumber(0, 11);
   const day = getRandomNumber(1, 28);
   return yyyymmdd(new Date(2017, month, day));
 };

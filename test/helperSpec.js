@@ -15,7 +15,8 @@ describe('Helper Functions', () => {
       });
       it('Should return a float with decimal expansion determined by third param', () => {
         const randomNum = getRandomNumber(0, 10, 3);
-        expect((randomNum * 100) % 1).to.not.equal(0);
+        // the number can possibly round to zero on the third place
+        expect((randomNum * 10) % 1).to.not.equal(0);
         expect((randomNum * 1000) % 1).to.equal(0);
       });
       it('Should work for negative inputs', () => {
