@@ -17,9 +17,9 @@ const getRandomDate = () => {
 };
 
 const addDays = (date, numDays) => {
-  const newDate = new Date();
-  newDate.setDate(date.getDate() + numDays);
-  return newDate;
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + numDays + 1);
+  return yyyymmdd(newDate);
 };
 
 module.exports = {

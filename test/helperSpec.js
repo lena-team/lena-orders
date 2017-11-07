@@ -1,5 +1,6 @@
 /* eslint-env mocha */
 const { expect } = require('chai');
+const yyyymmdd = require('yyyy-mm-dd');
 const { getRandomNumber, getRandomDate, addDays } = require('../helpers');
 
 describe('Helper Functions', () => {
@@ -39,6 +40,16 @@ describe('Helper Functions', () => {
           [year] = getRandomDate().split('-');
           expect(year).to.equal('2017');
         }
+      });
+    });
+    describe('addDays', () => {
+      const date = yyyymmdd(new Date(2017, 0, 1));
+      const datePlus = addDays(date, 2);
+      it('Should not mutate the original date', () => {
+        expect(date).to.not.equal(datePlus);
+      });
+      it('Should increment the number of days exactly', () => {
+        expect(datePlus).to.equal('2017-01-03');
       });
     });
   });
