@@ -17,8 +17,9 @@ const getRandomDate = () => {
 };
 
 const addDays = (date, numDays) => {
-  const newDate = new Date(date);
-  newDate.setDate(newDate.getDate() + numDays + 1);
+  const splitStr = date.split('-');
+  const newDate = new Date(splitStr[0], splitStr[1] - 1, splitStr[2]);
+  newDate.setDate(newDate.getDate() + numDays);
   return yyyymmdd(newDate);
 };
 

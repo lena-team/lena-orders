@@ -1,5 +1,6 @@
-# Files created by Mac
+# Files created by Mac and vim
 .DS_Store
+.swp
 
 # Logs
 logs

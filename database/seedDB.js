@@ -16,7 +16,7 @@ const generateFakeOrders = (start = 0, end = 10000000) => {
     promises.push(createOrder(userId, shippingAddress, createdAt)
       .then(response => response.order_id)
       .then((orderId) => {
-        const daysUntilUpdate = getRandomNumber(0, 20);
+        const daysUntilUpdate = getRandomNumber(1, 20);
         const updatedAt = addDays(new Date(createdAt), daysUntilUpdate);
         const cancelled = Math.random() < (0.2 + (daysUntilUpdate * 0.02));
         const deliveryStatus = cancelled ? 'cancelled' : 'delivered';
